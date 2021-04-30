@@ -130,7 +130,7 @@ with open('wmt14_en_fr/train500k.en', 'w') as f:
     for line in src[:500000]:
         f.write(line)
 
-with open('wmt14_en_fr/tmp/train500k.fr', 'w') as f:
+with open('wmt14_en_fr/train500k.fr', 'w') as f:
     for line in tgt[:500000]:
         f.write(line)
 
@@ -145,7 +145,7 @@ with open('wmt14_en_fr/train1M.en', 'w') as f:
     for line in src[:1000000]:
         f.write(line)
 
-with open('wmt14_en_fr/tmp/train1M.fr', 'w') as f:
+with open('wmt14_en_fr/train1M.fr', 'w') as f:
     for line in tgt[:1000000]:
         f.write(line)
 
@@ -160,7 +160,7 @@ with open('wmt14_en_fr/train3M.en', 'w') as f:
     for line in src[:3000000]:
         f.write(line)
 
-with open('wmt14_en_fr/tmp/train3M.fr', 'w') as f:
+with open('wmt14_en_fr/train3M.fr', 'w') as f:
     for line in tgt[:3000000]:
         f.write(line)
 HERE
