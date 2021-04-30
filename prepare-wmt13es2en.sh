@@ -108,7 +108,7 @@ for l in $src $tgt; do
     else
         t="ref"
     fi
-    grep '<seg id' $orig/test/newstest2013-$t.$l.sgm | \
+    grep '<seg id' $orig/test/newstest2013-src.$l.sgm | \
         sed -e 's/<seg id="[0-9]*">\s*//g' | \
         sed -e 's/\s*<\/seg>\s*//g' | \
         sed -e "s/\’/\'/g" | \
