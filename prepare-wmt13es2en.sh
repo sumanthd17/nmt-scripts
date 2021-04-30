@@ -78,7 +78,6 @@ for ((i=0;i<${#URLS[@]};++i)); do
     fi
 done
 
-gunzip giga-fren.release2.fixed.*.gz
 cd ..
 
 echo "pre-processing train data..."
