@@ -119,10 +119,10 @@ done
 python - <<HERE
 import random
 
-with open('wmt14_en_es/tmp/train.en', 'r') as f:
+with open('wmt13_en_es/tmp/train.en', 'r') as f:
     src = f.readlines()
 
-with open('wmt14_en_es/tmp/train.es', 'r') as f:
+with open('wmt13_en_es/tmp/train.es', 'r') as f:
     tgt = f.readlines()
 
 c = list(zip(src, tgt))
@@ -130,29 +130,29 @@ random.shuffle(c)
 a, b = zip(*c)
 
 # create 500k dataset
-with open('wmt14_en_es/tmp/train500k.en', 'w') as f:
+with open('wmt13_en_es/tmp/train500k.en', 'w') as f:
     for line in a[:750000]:
         f.write(line)
 
-with open('wmt14_en_es/tmp/train500k.es', 'w') as f:
+with open('wmt13_en_es/tmp/train500k.es', 'w') as f:
     for line in b[:750000]:
         f.write(line)
 
 # create 1M dataset
-with open('wmt14_en_es/tmp/train1M.en', 'w') as f:
+with open('wmt13_en_es/tmp/train1M.en', 'w') as f:
     for line in a[:1500000]:
         f.write(line)
 
-with open('wmt14_en_es/tmp/train1M.es', 'w') as f:
+with open('wmt13_en_es/tmp/train1M.es', 'w') as f:
     for line in b[:1500000]:
         f.write(line)
 
 # create 3M dataset
-with open('wmt14_en_es/tmp/train3M.en', 'w') as f:
+with open('wmt13_en_es/tmp/train3M.en', 'w') as f:
     for line in a[:4000000]:
         f.write(line)
 
-with open('wmt14_en_es/tmp/train3M.es', 'w') as f:
+with open('wmt13_en_es/tmp/train3M.es', 'w') as f:
     for line in b[:4000000]:
         f.write(line)
 HERE
@@ -188,47 +188,47 @@ perl $CLEAN -ratio 1.5 $tmp/bpe.valid $src $tgt $prep/valid 1 250
 
 python - <<HERE
 # create 500k dataset
-with open('wmt14_en_es/train500k.en', 'r') as f:
+with open('wmt13_en_es/train500k.en', 'r') as f:
     src = f.readlines()
 
-with open('wmt14_en_es/train500k.es', 'r') as f:
+with open('wmt13_en_es/train500k.es', 'r') as f:
     tgt = f.readlines()
 
-with open('wmt14_en_es/train500k.en', 'w') as f:
+with open('wmt13_en_es/train500k.en', 'w') as f:
     for line in src[:500000]:
         f.write(line)
 
-with open('wmt14_en_es/train500k.es', 'w') as f:
+with open('wmt13_en_es/train500k.es', 'w') as f:
     for line in tgt[:500000]:
         f.write(line)
 
 # create 1M dataset
-with open('wmt14_en_es/train1M.en', 'r') as f:
+with open('wmt13_en_es/train1M.en', 'r') as f:
     src = f.readlines()
 
-with open('wmt14_en_es/train1M.es', 'r') as f:
+with open('wmt13_en_es/train1M.es', 'r') as f:
     tgt = f.readlines()
 
-with open('wmt14_en_es/train1M.en', 'w') as f:
+with open('wmt13_en_es/train1M.en', 'w') as f:
     for line in src[:1000000]:
         f.write(line)
 
-with open('wmt14_en_es/train1M.es', 'w') as f:
+with open('wmt13_en_es/train1M.es', 'w') as f:
     for line in tgt[:1000000]:
         f.write(line)
 
 # create 3M dataset
-with open('wmt14_en_es/train3M.en', 'r') as f:
+with open('wmt13_en_es/train3M.en', 'r') as f:
     src = f.readlines()
 
-with open('wmt14_en_es/train3M.es', 'r') as f:
+with open('wmt13_en_es/train3M.es', 'r') as f:
     tgt = f.readlines()
 
-with open('wmt14_en_es/train3M.en', 'w') as f:
+with open('wmt13_en_es/train3M.en', 'w') as f:
     for line in src[:3000000]:
         f.write(line)
 
-with open('wmt14_en_es/train3M.es', 'w') as f:
+with open('wmt13_en_es/train3M.es', 'w') as f:
     for line in tgt[:3000000]:
         f.write(line)
 HERE
