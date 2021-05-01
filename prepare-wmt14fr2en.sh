@@ -119,6 +119,76 @@ for l in $src $tgt; do
 done
 
 python - <<HERE
+import random
+
+with open('wmt14_en_fr/tmp/train.en', 'r') as f:
+    src = f.readlines()
+
+with open('wmt14_en_fr/tmp/train.fr', 'r') as f:
+    tgt = f.readlines()
+
+c = list(zip(src, tgt))
+random.shuffle(c)
+a, b = zip(*c)
+
+# create 500k dataset
+with open('wmt14_en_fr/tmp/train500k.en', 'w') as f:
+    for line in a[:750000]:
+        f.write(line)
+
+with open('wmt14_en_fr/tmp/train500k.fr', 'w') as f:
+    for line in b[:750000]:
+        f.write(line)
+
+# create 1M dataset
+with open('wmt14_en_fr/tmp/train1M.en', 'w') as f:
+    for line in a[:1500000]:
+        f.write(line)
+
+with open('wmt14_en_fr/tmp/train1M.fr', 'w') as f:
+    for line in b[:1500000]:
+        f.write(line)
+
+# create 3M dataset
+with open('wmt14_en_fr/tmp/train3M.en', 'w') as f:
+    for line in a[:4000000]:
+        f.write(line)
+
+with open('wmt14_en_fr/tmp/train3M.fr', 'w') as f:
+    for line in b[:4000000]:
+        f.write(line)
+HERE
+
+TRAIN=$tmp/train.fr-en
+BPE_CODE=$prep/code
+rm -f $TRAIN
+for l in $src $tgt; do
+    cat $tmp/train3M.$l >> $TRAIN
+done
+
+echo "learn_bpe.py on ${TRAIN}..."
+python $BPEROOT/learn_bpe.py -s $BPE_TOKENS < $TRAIN > $BPE_CODE
+
+for L in $src $tgt; do
+    for f in train500k.$L train1M.$L train3M.$L; do
+        echo "apply_bpe.py to ${f}..."
+        python $BPEROOT/apply_bpe.py -c $BPE_CODE < $tmp/$f > $tmp/bpe.$f
+    done
+done
+
+for L in $src $tgt; do
+    for f in valid.$L test.$L; do
+        echo "apply_bpe.py to ${f}..."
+        python $BPEROOT/apply_bpe.py -c $BPE_CODE < $tmp/$f > $tmp/bpe.$f
+    done
+done
+
+perl $CLEAN -ratio 1.5 $tmp/bpe.train500k $src $tgt $prep/train500k 1 250
+perl $CLEAN -ratio 1.5 $tmp/bpe.train1M $src $tgt $prep/train1M 1 250
+perl $CLEAN -ratio 1.5 $tmp/bpe.train3M $src $tgt $prep/train3M 1 250
+perl $CLEAN -ratio 1.5 $tmp/bpe.valid $src $tgt $prep/valid 1 250
+
+python - <<HERE
 # create 500k dataset
 with open('wmt14_en_fr/train500k.en', 'r') as f:
     src = f.readlines()
@@ -162,76 +232,6 @@ with open('wmt14_en_fr/train3M.en', 'w') as f:
 
 with open('wmt14_en_fr/train3M.fr', 'w') as f:
     for line in tgt[:3000000]:
-        f.write(line)
-HERE
-
-TRAIN=$tmp/train.fr-en
-BPE_CODE=$prep/code
-rm -f $TRAIN
-for l in $src $tgt; do
-    cat $tmp/train3M.$l >> $TRAIN
-done
-
-echo "learn_bpe.py on ${TRAIN}..."
-python $BPEROOT/learn_bpe.py -s $BPE_TOKENS < $TRAIN > $BPE_CODE
-
-for L in $src $tgt; do
-    for f in train500k.$L train1M.$L train3M.$L; do
-        echo "apply_bpe.py to ${f}..."
-        python $BPEROOT/apply_bpe.py -c $BPE_CODE < $tmp/$f > $tmp/bpe.$f
-    done
-done
-
-for L in $src $tgt; do
-    for f in valid.$L test.$L; do
-        echo "apply_bpe.py to ${f}..."
-        python $BPEROOT/apply_bpe.py -c $BPE_CODE < $tmp/$f > $tmp/bpe.$f
-    done
-done
-
-perl $CLEAN -ratio 1.5 $tmp/bpe.train500k $src $tgt $prep/train500k 1 250
-perl $CLEAN -ratio 1.5 $tmp/bpe.train1M $src $tgt $prep/train1M 1 250
-perl $CLEAN -ratio 1.5 $tmp/bpe.train3M $src $tgt $prep/train3M 1 250
-perl $CLEAN -ratio 1.5 $tmp/bpe.valid $src $tgt $prep/valid 1 250
-
-python - <<HERE
-import random
-
-with open('wmt14_en_fr/tmp/train.en', 'r') as f:
-    src = f.readlines()
-
-with open('wmt14_en_fr/tmp/train.fr', 'r') as f:
-    tgt = f.readlines()
-
-c = list(zip(src, tgt))
-random.shuffle(c)
-a, b = zip(*c)
-
-# create 500k dataset
-with open('wmt14_en_fr/tmp/train500k.en', 'w') as f:
-    for line in a[:750000]:
-        f.write(line)
-
-with open('wmt14_en_fr/tmp/train500k.fr', 'w') as f:
-    for line in b[:750000]:
-        f.write(line)
-
-# create 1M dataset
-with open('wmt14_en_fr/tmp/train1M.en', 'w') as f:
-    for line in a[:1500000]:
-        f.write(line)
-
-with open('wmt14_en_fr/tmp/train1M.fr', 'w') as f:
-    for line in b[:1500000]:
-        f.write(line)
-
-# create 3M dataset
-with open('wmt14_en_fr/tmp/train3M.en', 'w') as f:
-    for line in a[:4000000]:
-        f.write(line)
-
-with open('wmt14_en_fr/tmp/train3M.fr', 'w') as f:
-    for line in b[:4000000]:
         f.write(line)
 HERE
 
