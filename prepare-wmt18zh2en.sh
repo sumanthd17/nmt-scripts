@@ -38,8 +38,8 @@ if [ ! -d "$SCRIPTS" ]; then
     exit
 fi
 
-src=en
-tgt=zh
+src=zh
+tgt=en
 lang=en-zh
 prep=wmt18_en_zh
 tmp=$prep/tmp
@@ -109,13 +109,14 @@ for l in $src $tgt; do
     else
         t="ref"
     fi
-    grep '<seg id' $orig/test-full/newstest2018-zhen-$t.$l.sgm | \
+    grep '<seg id' $orig/test/newstest2018-zhen-$t.$l.sgm | \
         sed -e 's/<seg id="[0-9]*">\s*//g' | \
         sed -e 's/\s*<\/seg>\s*//g' | \
         sed -e "s/\’/\'/g" | \
     perl $TOKENIZER -threads 64 -a -l $l > $tmp/test.$l
     echo ""
 done
+newstest2017-enzh-src.en.sgm
 
 python - <<HERE
 import random

@@ -46,8 +46,8 @@ if [ ! -d "$SCRIPTS" ]; then
     exit
 fi
 
-src=en
-tgt=es
+src=es
+tgt=en
 lang=en-es
 prep=wmt13_en_es
 tmp=$prep/tmp
