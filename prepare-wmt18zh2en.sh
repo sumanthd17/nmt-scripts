@@ -98,7 +98,7 @@ for l in $src $tgt; do
         sed -e "s/\’/\'/g" | \
     perl $NORM_PUNC $l | \
 	perl $REM_NON_PRINT_CHAR | \
-    perl $TOKENIZER -threads 64 -a -l $l > $tmp/test.$l
+    perl $TOKENIZER -threads 64 -a -l $l > $tmp/valid.$l
     echo ""
 done
 
