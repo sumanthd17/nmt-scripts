@@ -34,7 +34,7 @@ fairseq-train fr-en-$SPLIT \
     --lr-scheduler inverse_sqrt --warmup-init-lr 1e-07 --warmup-updates 4000 \
     --lr 5e-4 --clip-norm 0.0 \
     --criterion label_smoothed_cross_entropy --label-smoothing 0.1 --weight-decay 0.0\
-    --max-tokens 32768 --save-dir $SPLIT/checkpoints \
+    --max-tokens 32768 \
     --update-freq 2 \
     --patience 5 \
     --fp16 \
