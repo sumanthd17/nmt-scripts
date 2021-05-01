@@ -16,32 +16,21 @@ BPEROOT=subword-nmt/subword_nmt
 BPE_TOKENS=40000
 
 URLS=(
-    "http://statmt.org/wmt13/training-parallel-europarl-v7.tgz"
-    "http://statmt.org/wmt13/training-parallel-commoncrawl.tgz"
-    "http://statmt.org/wmt13/training-parallel-un.tgz"
-    "http://statmt.org/wmt14/training-parallel-nc-v9.tgz"
-    "http://statmt.org/wmt10/training-giga-fren.tar"
-    "http://www.statmt.org/wmt14/dev.tgz"
-    "http://statmt.org/wmt14/test-full.tgz"
+    "http://data.statmt.org/wmt18/translation-task/training-parallel-nc-v13.tgz"
+    "http://data.statmt.org/wmt18/translation-task/dev.tgz"
+    "http://data.statmt.org/wmt18/translation-task/test.tgz"
 )
 FILES=(
-    "training-parallel-europarl-v7.tgz"
-    "training-parallel-commoncrawl.tgz"
-    "training-parallel-un.tgz"
-    "training-parallel-nc-v9.tgz"
-    "training-giga-fren.tar"
+    "training-parallel-nc-v13.tgz"
     "dev.tgz"
-    "test-full.tgz"
+    "test.tgz"
 )
 CORPORA=(
-    "training/europarl-v7.fr-en"
-    "commoncrawl.fr-en"
-    "un/undoc.2000.fr-en"
-    "training/news-commentary-v9.fr-en"
-    "giga-fren.release2.fixed"
+    "training/news-commentary-v13.zh-en"
+    "en-zh/UNv1.0.en-zh"
 )
 DEV_CORPORA=(
-    "dev/newstest2013"
+    "dev/newstest2017"
 )
 
 if [ ! -d "$SCRIPTS" ]; then
@@ -50,9 +39,9 @@ if [ ! -d "$SCRIPTS" ]; then
 fi
 
 src=en
-tgt=fr
-lang=en-fr
-prep=wmt14_en_fr
+tgt=zh
+lang=en-zh
+prep=wmt18_en_zh
 tmp=$prep/tmp
 orig=orig
 
@@ -77,11 +66,12 @@ for ((i=0;i<${#URLS[@]};++i)); do
             tar zxvf $file
         elif [ ${file: -4} == ".tar" ]; then
             tar xvf $file
+        elif [ ${file: -7} == ".tar.gz" ]; then
+            tar xvf $file
         fi
     fi
 done
 
-gunzip giga-fren.release2.fixed.*.gz
 cd ..
 
 echo "pre-processing train data..."
@@ -97,12 +87,19 @@ done
 
 echo "pre-processing dev data..."
 for l in $src $tgt; do
-    for f in "${DEV_CORPORA[@]}"; do
-	cat $orig/$f.$l | \
-	    perl $NORM_PUNC $l | \
-	    perl $REM_NON_PRINT_CHAR | \
-	    perl $TOKENIZER --threads 64 -a -l $1 >> $tmp/valid.$l
-    done
+    if [ "$l" == "$src" ]; then
+        t="src"
+    else
+        t="ref"
+    fi
+    grep '<seg id' $orig/dev/newstest2017-zhen-$t.$l.sgm | \
+        sed -e 's/<seg id="[0-9]*">\s*//g' | \
+        sed -e 's/\s*<\/seg>\s*//g' | \
+        sed -e "s/\’/\'/g" | \
+    perl $NORM_PUNC $l | \
+	perl $REM_NON_PRINT_CHAR | \
+    perl $TOKENIZER -threads 64 -a -l $l > $tmp/test.$l
+    echo ""
 done
 
 echo "pre-processing test data..."
@@ -112,7 +109,7 @@ for l in $src $tgt; do
     else
         t="ref"
     fi
-    grep '<seg id' $orig/test-full/newstest2014-fren-$t.$l.sgm | \
+    grep '<seg id' $orig/test-full/newstest2018-zhen-$t.$l.sgm | \
         sed -e 's/<seg id="[0-9]*">\s*//g' | \
         sed -e 's/\s*<\/seg>\s*//g' | \
         sed -e "s/\’/\'/g" | \
@@ -123,10 +120,10 @@ done
 python - <<HERE
 import random
 
-with open('wmt14_en_fr/tmp/train.en', 'r') as f:
+with open('wmt18_en_zh/tmp/train.en', 'r') as f:
     src = f.readlines()
 
-with open('wmt14_en_fr/tmp/train.fr', 'r') as f:
+with open('wmt18_en_zh/tmp/train.zh', 'r') as f:
     tgt = f.readlines()
 
 c = list(zip(src, tgt))
@@ -134,34 +131,34 @@ random.shuffle(c)
 a, b = zip(*c)
 
 # create 500k dataset
-with open('wmt14_en_fr/tmp/train500k.en', 'w') as f:
+with open('wmt18_en_zh/tmp/train500k.en', 'w') as f:
     for line in a[:750000]:
         f.write(line)
 
-with open('wmt14_en_fr/tmp/train500k.fr', 'w') as f:
+with open('wmt18_en_zh/tmp/train500k.zh', 'w') as f:
     for line in b[:750000]:
         f.write(line)
 
 # create 1M dataset
-with open('wmt14_en_fr/tmp/train1M.en', 'w') as f:
+with open('wmt18_en_zh/tmp/train1M.en', 'w') as f:
     for line in a[:1500000]:
         f.write(line)
 
-with open('wmt14_en_fr/tmp/train1M.fr', 'w') as f:
+with open('wmt18_en_zh/tmp/train1M.zh', 'w') as f:
     for line in b[:1500000]:
         f.write(line)
 
 # create 3M dataset
-with open('wmt14_en_fr/tmp/train3M.en', 'w') as f:
+with open('wmt18_en_zh/tmp/train3M.en', 'w') as f:
     for line in a[:4000000]:
         f.write(line)
 
-with open('wmt14_en_fr/tmp/train3M.fr', 'w') as f:
+with open('wmt18_en_zh/tmp/train3M.zh', 'w') as f:
     for line in b[:4000000]:
         f.write(line)
 HERE
 
-TRAIN=$tmp/train.fr-en
+TRAIN=$tmp/train.zh-en
 BPE_CODE=$prep/code
 rm -f $TRAIN
 for l in $src $tgt; do
@@ -192,47 +189,47 @@ perl $CLEAN -ratio 1.5 $tmp/bpe.valid $src $tgt $prep/valid 1 250
 
 python - <<HERE
 # create 500k dataset
-with open('wmt14_en_fr/train500k.en', 'r') as f:
+with open('wmt18_en_zh/train500k.en', 'r') as f:
     src = f.readlines()
 
-with open('wmt14_en_fr/train500k.fr', 'r') as f:
+with open('wmt18_en_zh/train500k.zh', 'r') as f:
     tgt = f.readlines()
 
-with open('wmt14_en_fr/train500k.en', 'w') as f:
+with open('wmt18_en_zh/train500k.en', 'w') as f:
     for line in src[:500000]:
         f.write(line)
 
-with open('wmt14_en_fr/train500k.fr', 'w') as f:
+with open('wmt18_en_zh/tmp/train500k.zh', 'w') as f:
     for line in tgt[:500000]:
         f.write(line)
 
 # create 1M dataset
-with open('wmt14_en_fr/train1M.en', 'r') as f:
+with open('wmt18_en_zh/train1M.en', 'r') as f:
     src = f.readlines()
 
-with open('wmt14_en_fr/train1M.fr', 'r') as f:
+with open('wmt18_en_zh/train1M.zh', 'r') as f:
     tgt = f.readlines()
 
-with open('wmt14_en_fr/train1M.en', 'w') as f:
+with open('wmt18_en_zh/train1M.en', 'w') as f:
     for line in src[:1000000]:
         f.write(line)
 
-with open('wmt14_en_fr/train1M.fr', 'w') as f:
+with open('wmt18_en_zh/tmp/train1M.zh', 'w') as f:
     for line in tgt[:1000000]:
         f.write(line)
 
 # create 3M dataset
-with open('wmt14_en_fr/train3M.en', 'r') as f:
+with open('wmt18_en_zh/train3M.en', 'r') as f:
     src = f.readlines()
 
-with open('wmt14_en_fr/train3M.fr', 'r') as f:
+with open('wmt18_en_zh/train3M.zh', 'r') as f:
     tgt = f.readlines()
 
-with open('wmt14_en_fr/train3M.en', 'w') as f:
+with open('wmt18_en_zh/train3M.en', 'w') as f:
     for line in src[:3000000]:
         f.write(line)
 
-with open('wmt14_en_fr/train3M.fr', 'w') as f:
+with open('wmt18_en_zh/tmp/train3M.zh', 'w') as f:
     for line in tgt[:3000000]:
         f.write(line)
 HERE
