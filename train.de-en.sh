@@ -24,8 +24,8 @@ fairseq-preprocess \
 
 export SPLIT= # ADD SPLIT HERE
 CUDA_VISIBLE_DEVICES= # ADD DEVICE ID HERE \
-fairseq-train es-en-$SPLIT \
-    --source-lang es \
+fairseq-train de-en-$SPLIT \
+    --source-lang de \
     --target-lang en \
     --max-target-positions=256 \
     --max-target-positions=256 \
