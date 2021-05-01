@@ -17,7 +17,7 @@ BPEROOT=subword-nmt/subword_nmt
 BPE_TOKENS=40000
 
 CORPORA=(
-    "en-bn/train"
+    "en-te/train"
 )
 DEV_CORPORA=(
     "dev/dev"
@@ -31,10 +31,10 @@ if [ ! -d "$SCRIPTS" ]; then
     exit
 fi
 
-src=bn
+src=te
 tgt=en
-lang=en-bn
-prep=samanantar_en_bn
+lang=en-te
+prep=samanantar_en_te
 tmp=$prep/tmp
 orig=orig
 
@@ -61,10 +61,10 @@ done
 python - <<HERE
 import random
 
-with open('samanantar_en_bn/tmp/train.en', 'r') as f:
+with open('samanantar_en_te/tmp/train.en', 'r') as f:
     src = f.readlines()
 
-with open('samanantar_en_bn/tmp/train.bn', 'r') as f:
+with open('samanantar_en_te/tmp/train.te', 'r') as f:
     tgt = f.readlines()
 
 c = list(zip(src, tgt))
@@ -72,34 +72,34 @@ random.shuffle(c)
 a, b = zip(*c)
 
 # create 500k dataset
-with open('samanantar_en_bn/tmp/train500k.en', 'w') as f:
+with open('samanantar_en_te/tmp/train500k.en', 'w') as f:
     for line in a[:750000]:
         f.write(line)
 
-with open('samanantar_en_bn/tmp/train500k.bn', 'w') as f:
+with open('samanantar_en_te/tmp/train500k.te', 'w') as f:
     for line in b[:750000]:
         f.write(line)
 
 # create 1M dataset
-with open('samanantar_en_bn/tmp/train1M.en', 'w') as f:
+with open('samanantar_en_te/tmp/train1M.en', 'w') as f:
     for line in a[:1500000]:
         f.write(line)
 
-with open('samanantar_en_bn/tmp/train1M.bn', 'w') as f:
+with open('samanantar_en_te/tmp/train1M.te', 'w') as f:
     for line in b[:1500000]:
         f.write(line)
 
 # create 3M dataset
-with open('samanantar_en_bn/tmp/train3M.en', 'w') as f:
+with open('samanantar_en_te/tmp/train3M.en', 'w') as f:
     for line in a[:4000000]:
         f.write(line)
 
-with open('samanantar_en_bn/tmp/train3M.bn', 'w') as f:
+with open('samanantar_en_te/tmp/train3M.te', 'w') as f:
     for line in b[:4000000]:
         f.write(line)
 HERE
 
-TRAIN=$tmp/train.bn-en
+TRAIN=$tmp/train.te-en
 BPE_CODE=$prep/code
 rm -f $TRAIN
 for l in $src $tgt; do
@@ -124,47 +124,47 @@ perl $CLEAN -ratio 1.5 $tmp/bpe.valid $src $tgt $prep/valid 1 250
 
 python - <<HERE
 # create 500k dataset
-with open('samanantar_en_bn/train500k.en', 'r') as f:
+with open('samanantar_en_te/train500k.en', 'r') as f:
     src = f.readlines()
 
-with open('samanantar_en_bn/train500k.bn', 'r') as f:
+with open('samanantar_en_te/train500k.te', 'r') as f:
     tgt = f.readlines()
 
-with open('samanantar_en_bn/train500k.en', 'w') as f:
+with open('samanantar_en_te/train500k.en', 'w') as f:
     for line in src[:500000]:
         f.write(line)
 
-with open('samanantar_en_bn/train500k.bn', 'w') as f:
+with open('samanantar_en_te/train500k.te', 'w') as f:
     for line in tgt[:500000]:
         f.write(line)
 
 # create 1M dataset
-with open('samanantar_en_bn/train1M.en', 'r') as f:
+with open('samanantar_en_te/train1M.en', 'r') as f:
     src = f.readlines()
 
-with open('samanantar_en_bn/train1M.bn', 'r') as f:
+with open('samanantar_en_te/train1M.te', 'r') as f:
     tgt = f.readlines()
 
-with open('samanantar_en_bn/train1M.en', 'w') as f:
+with open('samanantar_en_te/train1M.en', 'w') as f:
     for line in src[:1000000]:
         f.write(line)
 
-with open('samanantar_en_bn/train1M.bn', 'w') as f:
+with open('samanantar_en_te/train1M.te', 'w') as f:
     for line in tgt[:1000000]:
         f.write(line)
 
 # create 3M dataset
-with open('samanantar_en_bn/train3M.en', 'r') as f:
+with open('samanantar_en_te/train3M.en', 'r') as f:
     src = f.readlines()
 
-with open('samanantar_en_bn/train3M.bn', 'r') as f:
+with open('samanantar_en_te/train3M.te', 'r') as f:
     tgt = f.readlines()
 
-with open('samanantar_en_bn/train3M.en', 'w') as f:
+with open('samanantar_en_te/train3M.en', 'w') as f:
     for line in src[:3000000]:
         f.write(line)
 
-with open('samanantar_en_bn/train3M.bn', 'w') as f:
+with open('samanantar_en_te/train3M.te', 'w') as f:
     for line in tgt[:3000000]:
         f.write(line)
 HERE
