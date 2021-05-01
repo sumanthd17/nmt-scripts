@@ -97,7 +97,7 @@ for l in $src $tgt; do
 	cat $orig/$f.$l | \
 	    perl $NORM_PUNC $l | \
 	    perl $REM_NON_PRINT_CHAR | \
-	    perl $TOKENIZER --threads 64 -a -l $1 >> $tmp/valid.$l
+	    perl $TOKENIZER --threads 64 -a -l $l >> $tmp/valid.$l
     done
 done
 
