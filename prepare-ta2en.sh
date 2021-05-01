@@ -116,6 +116,13 @@ for L in $src $tgt; do
     done
 done
 
+for L in $src $tgt; do
+    for f in valid.$L test.$L; do
+        echo "apply_bpe.py to ${f}..."
+        python $BPEROOT/apply_bpe.py -c $BPE_CODE < $tmp/$f > $tmp/bpe.$f
+    done
+done
+
 ## Apply bpe to dev and test data
 perl $CLEAN -ratio 1.5 $tmp/bpe.train500k $src $tgt $prep/train500k 1 250
 perl $CLEAN -ratio 1.5 $tmp/bpe.train1M $src $tgt $prep/train1M 1 250
