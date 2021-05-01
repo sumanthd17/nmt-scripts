@@ -116,7 +116,6 @@ for l in $src $tgt; do
     perl $TOKENIZER -threads 64 -a -l $l > $tmp/test.$l
     echo ""
 done
-newstest2017-enzh-src.en.sgm
 
 python - <<HERE
 import random
