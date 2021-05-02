@@ -35,15 +35,14 @@ lang=vi-en
 # for lack of a better name
 prep=train-vi-en
 tmp=$prep/tmp
-orig=orig
 
-mkdir -p $orig $tmp $prep
+mkdir -p $tmp $prep
 
 echo "pre-processing train data..."
 for l in $src $tgt; do
     # rm $tmp/train.tags.$lang.tok.$l
     for f in "${CORPORA[@]}"; do
-        cat $orig/$f.$l | \
+        cat $f.$l | \
             perl $NORM_PUNC $l | \
             perl $REM_NON_PRINT_CHAR | \
             perl $TOKENIZER -threads 64 -a -l $l >> $tmp/train.$l
@@ -53,7 +52,7 @@ done
 echo "pre-processing dev data..."
 for l in $src $tgt; do
     for f in "${DEV_CORPORA[@]}"; do
-        cat $orig/$f.$l | \
+        cat $f.$l | \
         perl $NORM_PUNC $l | \
         perl $REM_NON_PRINT_CHAR | \
         perl $TOKENIZER -threads 64 -a -l $l > $tmp/valid.$l
@@ -63,8 +62,7 @@ done
 
 echo "pre-processing test data..."
 for l in $src $tgt; do
-    cat $orig/$f.$l | \
-    perl $TOKENIZER -threads 64 -a -l $l > $tmp/test.$l
+    cat $f.$l | \ perl $TOKENIZER -threads 64 -a -l $l > $tmp/test.$l
     echo ""
 done
 
@@ -74,7 +72,7 @@ import random
 with open('train-vi-en/tmp/train.en', 'r') as f:
     src = f.readlines()
 
-with open('train-vi-en/tmp/train.ar', 'r') as f:
+with open('train-vi-en/tmp/train.vi', 'r') as f:
     tgt = f.readlines()
 
 c = list(zip(src, tgt))
@@ -86,7 +84,7 @@ with open('train-vi-en/tmp/train500k.en', 'w') as f:
     for line in a[:750000]:
         f.write(line)
 
-with open('train-vi-en/tmp/train500k.ar', 'w') as f:
+with open('train-vi-en/tmp/train500k.vi', 'w') as f:
     for line in b[:750000]:
         f.write(line)
 
@@ -95,7 +93,7 @@ with open('train-vi-en/tmp/train1M.en', 'w') as f:
     for line in a[:1500000]:
         f.write(line)
 
-with open('train-vi-en/tmp/train1M.ar', 'w') as f:
+with open('train-vi-en/tmp/train1M.vi', 'w') as f:
     for line in b[:1500000]:
         f.write(line)
 
@@ -106,12 +104,12 @@ with open('train-vi-en/tmp/train3M.en', 'w') as f:
     for line in a:
         f.write(line)
 
-with open('train-vi-en/tmp/train3M.ar', 'w') as f:
+with open('train-vi-en/tmp/train3M.vi', 'w') as f:
     for line in b:
         f.write(line)
 HERE
 
-TRAIN=$tmp/train.ar-en
+TRAIN=$tmp
 BPE_CODE=$prep/code
 rm -f $TRAIN
 for l in $src $tgt; do
@@ -146,14 +144,14 @@ python - <<HERE
 with open('train-vi-en/train500k.en', 'r') as f:
     src = f.readlines()
 
-with open('train-vi-en/train500k.ar', 'r') as f:
+with open('train-vi-en/train500k.vi', 'r') as f:
     tgt = f.readlines()
 
 with open('train-vi-en/train500k.en', 'w') as f:
     for line in src[:500000]:
         f.write(line)
 
-with open('train-vi-en/tmp/train500k.ar', 'w') as f:
+with open('train-vi-en/tmp/train500k.vi', 'w') as f:
     for line in tgt[:500000]:
         f.write(line)
 
@@ -161,14 +159,14 @@ with open('train-vi-en/tmp/train500k.ar', 'w') as f:
 with open('train-vi-en/train1M.en', 'r') as f:
     src = f.readlines()
 
-with open('train-vi-en/train1M.ar', 'r') as f:
+with open('train-vi-en/train1M.vi', 'r') as f:
     tgt = f.readlines()
 
 with open('train-vi-en/train1M.en', 'w') as f:
     for line in src[:1000000]:
         f.write(line)
 
-with open('train-vi-en/tmp/train1M.ar', 'w') as f:
+with open('train-vi-en/tmp/train1M.vi', 'w') as f:
     for line in tgt[:1000000]:
         f.write(line)
 
@@ -176,14 +174,14 @@ with open('train-vi-en/tmp/train1M.ar', 'w') as f:
 with open('train-vi-en/train3M.en', 'r') as f:
     src = f.readlines()
 
-with open('train-vi-en/train3M.ar', 'r') as f:
+with open('train-vi-en/train3M.vi', 'r') as f:
     tgt = f.readlines()
 
 with open('train-vi-en/train3M.en', 'w') as f:
     for line in src[:3000000]:
         f.write(line)
 
-with open('train-vi-en/tmp/train3M.ar', 'w') as f:
+with open('train-vi-en/tmp/train3M.vi', 'w') as f:
     for line in tgt[:3000000]:
         f.write(line)
 HERE

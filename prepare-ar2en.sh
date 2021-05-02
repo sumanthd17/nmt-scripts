@@ -34,15 +34,14 @@ tgt=en
 lang=ar-en
 prep=UN-ar-en
 tmp=$prep/tmp
-orig=orig
 
-mkdir -p $orig $tmp $prep
+mkdir -p  $tmp $prep
 
 echo "pre-processing train data..."
 for l in $src $tgt; do
     # rm $tmp/train.tags.$lang.tok.$l
     for f in "${CORPORA[@]}"; do
-        cat $orig/$f.$l | \
+        cat $f.$l | \
             perl $NORM_PUNC $l | \
             perl $REM_NON_PRINT_CHAR | \
             perl $TOKENIZER -threads 64 -a -l $l >> $tmp/train.$l
@@ -52,7 +51,7 @@ done
 echo "pre-processing dev data..."
 for l in $src $tgt; do
     for f in "${DEV_CORPORA[@]}"; do
-        cat $orig/$f.$l | \
+        cat $f.$l | \
         perl $NORM_PUNC $l | \
         perl $REM_NON_PRINT_CHAR | \
         perl $TOKENIZER -threads 64 -a -l $l > $tmp/valid.$l
@@ -62,7 +61,7 @@ done
 
 echo "pre-processing test data..."
 for l in $src $tgt; do
-    cat $orig/$f.$l | \
+    cat $f.$l | \
     perl $TOKENIZER -threads 64 -a -l $l > $tmp/test.$l
     echo ""
 done
@@ -70,10 +69,10 @@ done
 python - <<HERE
 import random
 
-with open('UN-ar-en/tmp/train.en', 'r') as f:
+with open('ar-en/train.en', 'r') as f:
     src = f.readlines()
 
-with open('UN-ar-en/tmp/train.ar', 'r') as f:
+with open('ar-en/train.ar', 'r') as f:
     tgt = f.readlines()
 
 c = list(zip(src, tgt))
@@ -108,7 +107,7 @@ with open('UN-ar-en/tmp/train3M.ar', 'w') as f:
         f.write(line)
 HERE
 
-TRAIN=$tmp/train.ar-en
+TRAIN=$tmp
 BPE_CODE=$prep/code
 rm -f $TRAIN
 for l in $src $tgt; do
