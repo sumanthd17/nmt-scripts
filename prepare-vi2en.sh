@@ -62,7 +62,7 @@ done
 
 echo "pre-processing test data..."
 for l in $src $tgt; do
-    cat $f.$l | \ perl $TOKENIZER -threads 64 -a -l $l > $tmp/test.$l
+    cat $f.$l | perl $TOKENIZER -threads 64 -a -l $l > $tmp/test.$l
     echo ""
 done
 
@@ -109,7 +109,7 @@ with open('train-vi-en/tmp/train3M.vi', 'w') as f:
         f.write(line)
 HERE
 
-TRAIN=$tmp
+TRAIN=$tmp/train.vi-en
 BPE_CODE=$prep/code
 rm -f $TRAIN
 for l in $src $tgt; do
@@ -135,7 +135,7 @@ done
 
 perl $CLEAN -ratio 1.5 $tmp/bpe.train500k $src $tgt $prep/train500k 1 250
 perl $CLEAN -ratio 1.5 $tmp/bpe.train1M $src $tgt $prep/train1M 1 250
-# since vi-en has atmost 3M data, we need to check if this is req
+# # since vi-en has atmost 3M data, we need to check if this is req
 perl $CLEAN -ratio 1.5 $tmp/bpe.train3M $src $tgt $prep/train3M 1 250
 perl $CLEAN -ratio 1.5 $tmp/bpe.valid $src $tgt $prep/valid 1 250
 

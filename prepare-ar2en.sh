@@ -107,7 +107,7 @@ with open('UN-ar-en/tmp/train3M.ar', 'w') as f:
         f.write(line)
 HERE
 
-TRAIN=$tmp
+TRAIN=$tmp/train.ar-en
 BPE_CODE=$prep/code
 rm -f $TRAIN
 for l in $src $tgt; do
