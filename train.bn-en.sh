@@ -1,35 +1,35 @@
-export TEXT=wmt18_en_zh
+export TEXT=samanantar_en_bn
 
 export SPLIT=3M
 fairseq-preprocess \
-    --source-lang zh --target-lang en \
+    --source-lang bn --target-lang en \
     --trainpref $TEXT/train$SPLIT --validpref $TEXT/valid --testpref $TEXT/test \
-    --destdir zh-en-$SPLIT/data-bin --thresholdtgt 0 --thresholdsrc 0 \
+    --destdir bn-en-$SPLIT/data-bin --thresholdtgt 0 --thresholdsrc 0 \
     --workers 64
 
 export SPLIT=500k
 fairseq-preprocess \
-    --source-lang zh --target-lang en \
+    --source-lang bn --target-lang en \
     --trainpref $TEXT/train$SPLIT --validpref $TEXT/valid --testpref $TEXT/test \
-    --destdir zh-en-$SPLIT/data-bin --thresholdtgt 0 --thresholdsrc 0 \
-    --srcdict zh-en-3M/data-bin/dict.zh.txt \
-    --tgtdict zh-en-3M/data-bin/dict.en.txt \
+    --destdir bn-en-$SPLIT/data-bin --thresholdtgt 0 --thresholdsrc 0 \
+    --srcdict bn-en-3M/data-bin/dict.bn.txt \
+    --tgtdict bn-en-3M/data-bin/dict.en.txt \
     --workers 64
 
 export SPLIT=1M
 fairseq-preprocess \
-    --source-lang zh --target-lang en \
+    --source-lang bn --target-lang en \
     --trainpref $TEXT/train$SPLIT --validpref $TEXT/valid --testpref $TEXT/test \
-    --destdir zh-en-$SPLIT/data-bin --thresholdtgt 0 --thresholdsrc 0 \
-    --srcdict zh-en-3M/data-bin/dict.zh.txt \
-    --tgtdict zh-en-3M/data-bin/dict.en.txt \
+    --destdir bn-en-$SPLIT/data-bin --thresholdtgt 0 --thresholdsrc 0 \
+    --srcdict bn-en-3M/data-bin/dict.bn.txt \
+    --tgtdict bn-en-3M/data-bin/dict.en.txt \
     --workers 64
 
 
 export SPLIT= # ADD SPLIT HERE
 CUDA_VISIBLE_DEVICES= # ADD DEVICE ID HERE \
-fairseq-train zh-en-$SPLIT/data-bin \
-    --source-lang zh \
+fairseq-train bn-en-$SPLIT/data-bin \
+    --source-lang bn \
     --target-lang en \
     --max-target-positions=256 \
     --max-target-positions=256 \

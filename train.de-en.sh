@@ -1,30 +1,33 @@
 export TEXT=wmt14_en_de
 
+export SPLIT=3M
+fairseq-preprocess \
+    --source-lang de --target-lang en \
+    --trainpref $TEXT/train$SPLIT --validpref $TEXT/valid --testpref $TEXT/test \
+    --destdir de-en-$SPLIT/data-bin --thresholdtgt 0 --thresholdsrc 0 \
+    --workers 64
+
 export SPLIT=500k
 fairseq-preprocess \
     --source-lang de --target-lang en \
     --trainpref $TEXT/train$SPLIT --validpref $TEXT/valid --testpref $TEXT/test \
-    --destdir de-en-$SPLIT --thresholdtgt 0 --thresholdsrc 0 \
+    --destdir de-en-$SPLIT/data-bin --thresholdtgt 0 --thresholdsrc 0 \
+    --srcdict de-en-3M/data-bin/dict.de.txt \
+    --tgtdict de-en-3M/data-bin/dict.en.txt \
     --workers 64
 
 export SPLIT=1M
 fairseq-preprocess \
     --source-lang de --target-lang en \
     --trainpref $TEXT/train$SPLIT --validpref $TEXT/valid --testpref $TEXT/test \
-    --destdir de-en-$SPLIT --thresholdtgt 0 --thresholdsrc 0 \
+    --destdir de-en-$SPLIT/data-bin --thresholdtgt 0 --thresholdsrc 0 \
+    --srcdict de-en-3M/data-bin/dict.de.txt \
+    --tgtdict de-en-3M/data-bin/dict.en.txt \
     --workers 64
-
-export SPLIT=3M
-fairseq-preprocess \
-    --source-lang de --target-lang en \
-    --trainpref $TEXT/train$SPLIT --validpref $TEXT/valid --testpref $TEXT/test \
-    --destdir de-en-$SPLIT --thresholdtgt 0 --thresholdsrc 0 \
-    --workers 64
-
 
 export SPLIT= # ADD SPLIT HERE
 CUDA_VISIBLE_DEVICES= # ADD DEVICE ID HERE \
-fairseq-train de-en-$SPLIT \
+fairseq-train de-en-$SPLIT/data-bin \
     --source-lang de \
     --target-lang en \
     --max-target-positions=256 \
