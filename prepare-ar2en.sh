@@ -148,7 +148,7 @@ with open('UN-ar-en/train500k.en', 'w') as f:
     for line in src[:500000]:
         f.write(line)
 
-with open('UN-ar-en/tmp/train500k.ar', 'w') as f:
+with open('UN-ar-en/train500k.ar', 'w') as f:
     for line in tgt[:500000]:
         f.write(line)
 
@@ -163,7 +163,7 @@ with open('UN-ar-en/train1M.en', 'w') as f:
     for line in src[:1000000]:
         f.write(line)
 
-with open('UN-ar-en/tmp/train1M.ar', 'w') as f:
+with open('UN-ar-en/train1M.ar', 'w') as f:
     for line in tgt[:1000000]:
         f.write(line)
 
@@ -178,7 +178,7 @@ with open('UN-ar-en/train3M.en', 'w') as f:
     for line in src[:3000000]:
         f.write(line)
 
-with open('UN-ar-en/tmp/train3M.ar', 'w') as f:
+with open('UN-ar-en/train3M.ar', 'w') as f:
     for line in tgt[:3000000]:
         f.write(line)
 HERE

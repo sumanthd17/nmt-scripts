@@ -37,6 +37,9 @@ rdrsegmenter = VnCoreNLP(
 
 def preprocess_line(line, normalizer, lang, transliterate=False):
     if lang == "en":
+        # this is using cleaner for vi text and imp for en-vi dataset
+        # TODO: how to not include this for other language cleaning
+        line = fix_contents(line)
         return " ".join(
             en_tok.tokenize(en_normalizer.normalize(line.strip()), escape=False)
         )

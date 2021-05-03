@@ -145,7 +145,7 @@ with open('train-vi-en/train500k.en', 'w') as f:
     for line in src[:500000]:
         f.write(line)
 
-with open('train-vi-en/tmp/train500k.vi', 'w') as f:
+with open('train-vi-en/train500k.vi', 'w') as f:
     for line in tgt[:500000]:
         f.write(line)
 
@@ -160,7 +160,7 @@ with open('train-vi-en/train1M.en', 'w') as f:
     for line in src[:1000000]:
         f.write(line)
 
-with open('train-vi-en/tmp/train1M.vi', 'w') as f:
+with open('train-vi-en/train1M.vi', 'w') as f:
     for line in tgt[:1000000]:
         f.write(line)
 
@@ -175,7 +175,7 @@ with open('train-vi-en/train3M.en', 'w') as f:
     for line in src[:3000000]:
         f.write(line)
 
-with open('train-vi-en/tmp/train3M.vi', 'w') as f:
+with open('train-vi-en/train3M.vi', 'w') as f:
     for line in tgt[:3000000]:
         f.write(line)
 HERE
