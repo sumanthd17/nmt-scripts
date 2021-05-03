@@ -16,7 +16,14 @@ parser.add_argument('--src_code', type=str)
 parser.add_argument('--tgt', type=str)
 parser.add_argument('--BATCH_SIZE', type=int)
 
+args = parser.parse_args()
 batch = []
+
+data = args.data
+src = args.src
+src_code = args.src_code
+tgt = args.tgt
+BATCH_SIZE = args.BATCH_SIZE
 
 with open(f'./{src}-{tgt}/{data}/test.{src}', 'r') as f:
     src_lines = f.readlines()
