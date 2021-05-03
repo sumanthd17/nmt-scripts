@@ -42,27 +42,21 @@ echo "pre-processing train data..."
 for l in $src $tgt; do
     # rm $tmp/train.tags.$lang.tok.$l
     for f in "${CORPORA[@]}"; do
-        cat $f.$l | \
-            perl $NORM_PUNC $l | \
-            perl $REM_NON_PRINT_CHAR | \
-            perl $TOKENIZER -threads 64 -a -l $l >> $tmp/train.$l
+        python preprocess_translate.py $f.$l $tmp/train.$l $l
     done
 done
 
 echo "pre-processing dev data..."
 for l in $src $tgt; do
     for f in "${DEV_CORPORA[@]}"; do
-        cat $f.$l | \
-        perl $NORM_PUNC $l | \
-        perl $REM_NON_PRINT_CHAR | \
-        perl $TOKENIZER -threads 64 -a -l $l > $tmp/valid.$l
+        python preprocess_translate.py $orig/$f.$l $tmp/valid.$l $l
         echo ""
     done
 done
 
 echo "pre-processing test data..."
 for l in $src $tgt; do
-    cat $f.$l | perl $TOKENIZER -threads 64 -a -l $l > $tmp/test.$l
+    python preprocess_translate.py $orig/$f.$l $tmp/test.$l $l
     echo ""
 done
 
