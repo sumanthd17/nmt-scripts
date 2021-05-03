@@ -49,14 +49,14 @@ done
 echo "pre-processing dev data..."
 for l in $src $tgt; do
     for f in "${DEV_CORPORA[@]}"; do
-        python preprocess_translate.py $orig/$f.$l $tmp/valid.$l $l
+        python preprocess_translate.py $f.$l $tmp/valid.$l $l
         echo ""
     done
 done
 
 echo "pre-processing test data..."
 for l in $src $tgt; do
-    python preprocess_translate.py $orig/$f.$l $tmp/test.$l $l
+    python preprocess_translate.py $f.$l $tmp/test.$l $l
     echo ""
 done
 

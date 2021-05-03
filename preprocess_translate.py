@@ -24,6 +24,7 @@ from indicnlp.transliterate import unicode_transliterate
 
 # for vietnamese tokenization
 from vncorenlp import VnCoreNLP
+from clean_vi_text import fix_contents
 
 
 en_tok = MosesTokenizer(lang="en")
@@ -40,12 +41,13 @@ def preprocess_line(line, normalizer, lang, transliterate=False):
             en_tok.tokenize(en_normalizer.normalize(line.strip()), escape=False)
         )
     elif lang == "vi":
+        line = fix_contents(line)
         sentences = rdrsegmenter.tokenize(line)
         tokenized_sentence = ""
-        if len(sentences) > 1:
-            print(
-                f"WARNING: Vietnamese line is getting segmented to multiple sentences. Recheck: {line}"
-            )
+        # if len(sentences) > 1:
+        #     print(
+        #         f"WARNING: Vietnamese line is getting segmented to multiple sentences. Recheck: {line}"
+        #     )
         for sentence in sentences:
             tokenized_sentence += " ".join(sentence)
             if sentences[-1] != sentence:
@@ -79,7 +81,7 @@ def preprocess(infname, outfname, lang, transliterate=False):
 
     n = 0
     num_lines = sum(1 for line in open(infname, "r"))
-    if lang == "en":
+    if lang == "en" or lang == "vi":
         with open(infname, "r", encoding="utf-8") as infile, open(
             outfname, "w", encoding="utf-8"
         ) as outfile:
@@ -92,7 +94,6 @@ def preprocess(infname, outfname, lang, transliterate=False):
             for line in out_lines:
                 outfile.write(line + "\n")
                 n += 1
-
     else:
         normfactory = indic_normalize.IndicNormalizerFactory()
         normalizer = normfactory.get_normalizer(lang)
