@@ -45,6 +45,6 @@ for i in tqdm(range(0, len(src_lines), BATCH_SIZE)):
     tgt_lines.extend(tokenizer.batch_decode(generated_tokens, skip_special_tokens=True))
     batch = []
 
-with open(f'./{src}-{tgt}/{data}/predicted-mBART50.{tgt}', 'w') as f:
+with open(f'./{src}-{tgt}/{data}/predicted-OPUS.{tgt}', 'w') as f:
     for line in tgt_lines:
         f.write(line+'\n')
