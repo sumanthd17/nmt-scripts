@@ -263,13 +263,5 @@ if __name__ == "__main__":
     else:
         print(f"Invalid arguments: {sys.argv}")
         exit()
-    if lang == "ar":
-        tn.clean_data(
-            file_path=infname,
-            save_path=outfname,
-            remove_diacritics=True,
-            segment=True,
-            normalize=True,
-        )
-    else:
-        print(preprocess(infname, outfname, lang, transliterate))
+
+    print(preprocess(infname, outfname, lang, transliterate))
