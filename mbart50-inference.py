@@ -36,7 +36,7 @@ for i in tqdm(range(0, len(src_lines), BATCH_SIZE)):
         batch = src_lines[i:len(src_lines)]
 
     tokenizer.src_lang = src_code
-    encoded = tokenizer(batch, return_tensors='pt', padding=True)
+    encoded = tokenizer(batch, return_tensors='pt', padding=True, truncation=True, max_length=256)
     encoded.to('cuda')
     generated_tokens = model.generate(
         **encoded,
