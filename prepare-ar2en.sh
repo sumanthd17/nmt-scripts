@@ -55,8 +55,10 @@ done
 
 echo "pre-processing test data..."
 for l in $src $tgt; do
-    python preprocess_translate.py $f.$l $tmp/test.$l $l
-    echo ""
+    for f in "${TEST_CORPORA[@]}"; do
+        python preprocess_translate.py $f.$l $tmp/test.$l $l
+        echo ""
+    done
 done
 
 python - <<HERE
