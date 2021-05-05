@@ -84,6 +84,8 @@ def clean_ar_text(
 
     text = tn.tnkeeh._add_spaces_to_all_special_chars(text)
     text = tn.tnkeeh._remove_extra_spaces(text)
+    # some functions is adding a + sign to the arabic words. Hence removing this
+    text = text.replace("+", "")
     return text
 
 
