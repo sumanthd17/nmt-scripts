@@ -25,8 +25,10 @@ from indicnlp.transliterate import unicode_transliterate
 # for vietnamese tokenization
 from vncorenlp import VnCoreNLP
 from clean_vi_text import fix_contents
+import re
 
 import tnkeeh as tn
+from farasa.segmenter import FarasaSegmenter
 
 
 en_tok = MosesTokenizer(lang="en")
@@ -35,6 +37,56 @@ en_normalizer = MosesPunctNormalizer()
 rdrsegmenter = VnCoreNLP(
     "vncorenlp/VnCoreNLP-1.1.1.jar", annotators="wseg", max_heap_size="-Xmx500m"
 )
+ar_segmenter = FarasaSegmenter()
+
+
+def clean_ar_text(
+    text,
+    segment=False,
+    remove_special_chars=False,
+    remove_english=False,
+    normalize=False,
+    remove_diacritics=False,
+    excluded_chars=[],
+    remove_tatweel=False,
+    remove_html_elements=False,
+    remove_links=False,
+    remove_twitter_meta=False,
+    remove_long_words=False,
+    remove_repeated_chars=False,
+    by_chunk=False,
+    chunk_size=100000,
+    normalize_dots=False,
+):
+
+    if remove_repeated_chars:
+        text = tn.tnkeeh._remove_repeated_chars(text)
+    if remove_html_elements:
+        text = tn.tnkeeh._remove_html_elements(text)
+    if segment:
+        text = tn.tnkeeh._farasa_segment(text, ar_segmenter)
+    if remove_english:
+        text = tn.tnkeeh._remove_english_chars(text)
+    if normalize:
+        text = tn.tnkeeh._normalize_data(text)
+    if remove_diacritics:
+        text = tn.tnkeeh._remove_diacritics(text)
+    if remove_special_chars:
+        text = tn.tnkeeh._remove_special_chars(text, excluded_chars)
+    if remove_tatweel:
+        text = re.sub("ـ", "", text)
+    if remove_links:
+        text = tn.tnkeeh._remove_links(text)
+    if remove_twitter_meta:
+        text = tn.tnkeeh._remove_twitter_meta(text)
+    if remove_long_words:
+        text = tn.tnkeeh._remove_long_words(text)
+
+    text = tn.tnkeeh._add_spaces_to_all_special_chars(text)
+    text = tn.tnkeeh._remove_extra_spaces(text)
+    # some functions is adding a + sign to the arabic words. Hence removing this
+    text = text.replace("+", "")
+    return text
 
 
 def preprocess_line(line, normalizer, lang, transliterate=False):
@@ -93,6 +145,24 @@ def preprocess(infname, outfname, lang, transliterate=False):
 
             out_lines = Parallel(n_jobs=-1, backend="multiprocessing")(
                 delayed(preprocess_line)(line, None, lang)
+                for line in tqdm(infile, total=num_lines)
+            )
+
+            for line in out_lines:
+                outfile.write(line + "\n")
+                n += 1
+    elif lang == "ar":
+        with open(infname, "r", encoding="utf-8") as infile, open(
+            outfname, "w", encoding="utf-8"
+        ) as outfile:
+
+            out_lines = Parallel(n_jobs=-1, backend="multiprocessing")(
+                delayed(clean_ar_text)(
+                    text=line,
+                    remove_diacritics=True,
+                    segment=True,
+                    normalize=True,
+                )
                 for line in tqdm(infile, total=num_lines)
             )
 
@@ -195,13 +265,5 @@ if __name__ == "__main__":
     else:
         print(f"Invalid arguments: {sys.argv}")
         exit()
-    if lang == "ar":
-        tn.clean_data(
-            file_path=infname,
-            save_path=outfname,
-            remove_diacritics=True,
-            segment=True,
-            normalize=True,
-        )
-    else:
-        print(preprocess(infname, outfname, lang, transliterate))
+
+    print(preprocess(infname, outfname, lang, transliterate))

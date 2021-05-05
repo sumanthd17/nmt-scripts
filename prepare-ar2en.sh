@@ -55,17 +55,19 @@ done
 
 echo "pre-processing test data..."
 for l in $src $tgt; do
-    python preprocess_translate.py $f.$l $tmp/test.$l $l
-    echo ""
+    for f in "${TEST_CORPORA[@]}"; do
+        python preprocess_translate.py $f.$l $tmp/test.$l $l
+        echo ""
+    done
 done
 
 python - <<HERE
 import random
 
-with open('ar-en/train.en', 'r') as f:
+with open('UN-ar-en/tmp/train.en', 'r') as f:
     src = f.readlines()
 
-with open('ar-en/train.ar', 'r') as f:
+with open('UN-ar-en/tmp/train.ar', 'r') as f:
     tgt = f.readlines()
 
 c = list(zip(src, tgt))
@@ -135,6 +137,7 @@ for L in $src $tgt; do
     cp $tmp/bpe.train1M.$L $prep/train1M.$L
     cp $tmp/bpe.train3M.$L $prep/train3M.$L
     cp $tmp/bpe.valid.$L $prep/valid.$L
+    cp $tmp/bpe.test.$L $prep/test.$L
 done
 
 python - <<HERE
@@ -183,7 +186,3 @@ with open('UN-ar-en/train3M.ar', 'w') as f:
     for line in tgt[:3000000]:
         f.write(line)
 HERE
-
-for L in $src $tgt; do
-    cp $tmp/bpe.test.$L $prep/test.$L
-done
