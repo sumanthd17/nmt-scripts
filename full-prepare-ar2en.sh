@@ -82,19 +82,19 @@ echo "apply_bpe.py on ${$tmp/train.$src}..."
 python $BPEROOT/apply_bpe.py -c $AR_CODE < $tmp/train.$src > $tmp/bpe.train.$src
 
 echo "apply_bpe.py on ${$tmp/train.$tgt}..."
-python $BPEROOT/apply_bpe.py -c $EN_CODE < $tmp/train.$tgt > $tmp/bpe.train.$src
+python $BPEROOT/apply_bpe.py -c $EN_CODE < $tmp/train.$tgt > $tmp/bpe.train.$tgt
 
 echo "apply_bpe.py on ${$tmp/valid.$src}..."
 python $BPEROOT/apply_bpe.py -c $AR_CODE < $tmp/valid.$src > $tmp/bpe.valid.$src
 
 echo "apply_bpe.py on ${$tmp/valid.$tgt}..."
-python $BPEROOT/apply_bpe.py -c $EN_CODE < $tmp/valid.$tgt > $tmp/bpe.valid.$src
+python $BPEROOT/apply_bpe.py -c $EN_CODE < $tmp/valid.$tgt > $tmp/bpe.valid.$tgt
 
 echo "apply_bpe.py on ${$tmp/test.$src}..."
 python $BPEROOT/apply_bpe.py -c $AR_CODE < $tmp/test.$src > $tmp/bpe.test.$src
 
 echo "apply_bpe.py on ${$tmp/test.$tgt}..."
-python $BPEROOT/apply_bpe.py -c $EN_CODE < $tmp/test.$tgt > $tmp/bpe.test.$src
+python $BPEROOT/apply_bpe.py -c $EN_CODE < $tmp/test.$tgt > $tmp/bpe.test.$tgt
 
 
 # arabic is known to have longer sentneces, hence not doing any ratio cleaning here
