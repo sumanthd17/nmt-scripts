@@ -26,7 +26,7 @@ FILES=(
     "test.tgz"
 )
 CORPORA=(
-    "training/news-commentary-v13.zh-en"
+    "training-parallel-nc-v13/news-commentary-v13.zh-en"
     "en-zh/UNv1.0.en-zh"
 )
 DEV_CORPORA=(
