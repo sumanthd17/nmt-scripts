@@ -30,6 +30,9 @@ import re
 import tnkeeh as tn
 from farasa.segmenter import FarasaSegmenter
 
+# for bulgarian and turkish
+from cube.api import Cube
+
 
 en_tok = MosesTokenizer(lang="en")
 en_normalizer = MosesPunctNormalizer()
@@ -38,6 +41,12 @@ rdrsegmenter = VnCoreNLP(
     "vncorenlp/VnCoreNLP-1.1.1.jar", annotators="wseg", max_heap_size="-Xmx500m"
 )
 ar_segmenter = FarasaSegmenter()
+
+bg_cube = Cube(verbose=False)
+bg_cube.load("bg")
+
+tr_cube = Cube(verbose=False)
+tr_cube.load("tr")
 
 
 def clean_ar_text(
@@ -89,6 +98,24 @@ def clean_ar_text(
     return text
 
 
+def join_tokenized_sentence_list(sentences_list, cube_tokenized=False):
+    tokenized_sentence = ""
+    # if len(sentences) > 1:
+    #     print(
+    #         f"WARNING: Line is getting segmented to multiple sentences. Recheck: {line}"
+    #     )
+    for sentence in sentences_list:
+        if not cube_tokenized:
+            tokenized_sentence += " ".join(sentence)
+
+        else:
+            tokenized_sentence += " ".join(entry.word for entry in sentence)
+        if sentences_list[-1] != sentence:
+            tokenized_sentence += " "
+
+    return tokenized_sentence
+
+
 def preprocess_line(line, normalizer, lang, transliterate=False):
     if lang == "en":
         # this is using cleaner for vi text and imp for en-vi dataset
@@ -100,17 +127,20 @@ def preprocess_line(line, normalizer, lang, transliterate=False):
     elif lang == "vi":
         line = fix_contents(line)
         sentences = rdrsegmenter.tokenize(line)
-        tokenized_sentence = ""
-        # if len(sentences) > 1:
-        #     print(
-        #         f"WARNING: Vietnamese line is getting segmented to multiple sentences. Recheck: {line}"
-        #     )
-        for sentence in sentences:
-            tokenized_sentence += " ".join(sentence)
-            if sentences[-1] != sentence:
-                tokenized_sentence += " "
+        tokenized_sentence = join_tokenized_sentence_list(sentences)
         return tokenized_sentence
 
+    elif lang == "bg":
+        sentences = bg_cube(line)
+        tokenized_sentence = join_tokenized_sentence_list(
+            sentences, cube_tokenized=True
+        )
+
+    elif lang == "tr":
+        sentences = tr_cube(line)
+        tokenized_sentence = join_tokenized_sentence_list(
+            sentences, cube_tokenized=True
+        )
     elif transliterate:
         # line = indic_detokenize.trivial_detokenize(line.strip(), lang)
         return unicode_transliterate.UnicodeIndicTransliterator.transliterate(
@@ -138,7 +168,7 @@ def preprocess(infname, outfname, lang, transliterate=False):
 
     n = 0
     num_lines = sum(1 for line in open(infname, "r"))
-    if lang == "en" or lang == "vi":
+    if lang == "en" or lang == "vi" or lang == "bg" or lang == "tr":
         with open(infname, "r", encoding="utf-8") as infile, open(
             outfname, "w", encoding="utf-8"
         ) as outfile:
