@@ -40,8 +40,8 @@ fi
 
 src=zh
 tgt=en
-lang=en-zh
-prep=wmt18_en_zh
+lang=zh-en
+prep=wmt18_zh_en
 tmp=$prep/tmp
 orig=orig
 
@@ -117,32 +117,42 @@ for l in $src $tgt; do
     echo ""
 done
 
-TRAIN=$tmp/train.zh-en
-BPE_CODE=$prep/code
-rm -f $TRAIN
-for l in $src $tgt; do
-    cat $tmp/train.$l >> $TRAIN
-done
+# TRAIN=$tmp/train.zh-en
+# BPE_CODE=$prep/code
+# rm -f $TRAIN
+# for l in $src $tgt; do
+#     cat $tmp/train.$l >> $TRAIN
+# done
 
-echo "learn_bpe.py on ${TRAIN}..."
-python $BPEROOT/learn_bpe.py -s $BPE_TOKENS < $TRAIN > $BPE_CODE
+ZH_CODE=$prep/zh_code
+EN_CODE=$prep/en_code
 
-for L in $src $tgt; do
-    for f in train.$L; do
-        echo "apply_bpe.py to ${f}..."
-        python $BPEROOT/apply_bpe.py -c $BPE_CODE < $tmp/$f > $tmp/bpe.$f
-    done
-done
+echo "learn_bpe.py on ${$tmp/train.$src}..."
+python $BPEROOT/learn_bpe.py -s $BPE_TOKENS < $tmp/train.$src > $ZH_CODE
 
-for L in $src $tgt; do
-    for f in valid.$L test.$L; do
-        echo "apply_bpe.py to ${f}..."
-        python $BPEROOT/apply_bpe.py -c $BPE_CODE < $tmp/$f > $tmp/bpe.$f
-    done
-done
+echo "learn_bpe.py on ${$tmp/train.$tgt}..."
+python $BPEROOT/learn_bpe.py -s $BPE_TOKENS < $tmp/train.$tgt > $EN_CODE
 
-perl $CLEAN -ratio 1.5 $tmp/bpe.train $src $tgt $prep/train 1 250
-perl $CLEAN -ratio 1.5 $tmp/bpe.valid $src $tgt $prep/valid 1 250
+echo "apply_bpe.py on ${$tmp/train.$src}..."
+python $BPEROOT/apply_bpe.py -c $ZH_CODE < $tmp/train.$src > $tmp/bpe.train.$src
+
+echo "apply_bpe.py on ${$tmp/train.$tgt}..."
+python $BPEROOT/apply_bpe.py -c $EN_CODE < $tmp/train.$tgt > $tmp/bpe.train.$tgt
+
+echo "apply_bpe.py on ${$tmp/valid.$src}..."
+python $BPEROOT/apply_bpe.py -c $ZH_CODE < $tmp/valid.$src > $tmp/bpe.valid.$src
+
+echo "apply_bpe.py on ${$tmp/valid.$tgt}..."
+python $BPEROOT/apply_bpe.py -c $EN_CODE < $tmp/valid.$tgt > $tmp/bpe.valid.$tgt
+
+echo "apply_bpe.py on ${$tmp/test.$src}..."
+python $BPEROOT/apply_bpe.py -c $ZH_CODE < $tmp/test.$src > $tmp/bpe.test.$src
+
+echo "apply_bpe.py on ${$tmp/test.$tgt}..."
+python $BPEROOT/apply_bpe.py -c $EN_CODE < $tmp/test.$tgt > $tmp/bpe.test.$tgt
+
+perl $CLEAN $tmp/bpe.train $src $tgt $prep/train 1 250
+perl $CLEAN $tmp/bpe.valid $src $tgt $prep/valid 1 250
 
 for L in $src $tgt; do
     cp $tmp/bpe.test.$L $prep/test.$L
