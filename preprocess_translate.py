@@ -135,12 +135,13 @@ def preprocess_line(line, normalizer, lang, transliterate=False):
         tokenized_sentence = join_tokenized_sentence_list(
             sentences, cube_tokenized=True
         )
-
+        return tokenized_sentence
     elif lang == "tr":
         sentences = tr_cube(line)
         tokenized_sentence = join_tokenized_sentence_list(
             sentences, cube_tokenized=True
         )
+        return tokenized_sentence
     elif transliterate:
         # line = indic_detokenize.trivial_detokenize(line.strip(), lang)
         return unicode_transliterate.UnicodeIndicTransliterator.transliterate(
@@ -186,15 +187,15 @@ def preprocess(infname, outfname, lang, transliterate=False):
             outfname, "w", encoding="utf-8"
         ) as outfile:
 
-            out_lines = Parallel(n_jobs=-1, backend="multiprocessing")(
-                delayed(clean_ar_text)(
+            out_lines = [
+                clean_ar_text(
                     text=line,
                     remove_diacritics=True,
                     segment=True,
                     normalize=True,
                 )
                 for line in tqdm(infile, total=num_lines)
-            )
+            ]
 
             for line in out_lines:
                 outfile.write(line + "\n")
